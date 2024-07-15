@@ -4,7 +4,18 @@ sf::Color palette[] = {
     sf::Color(  0x000000ff  ),
     sf::Color(  0xffc300ff  ),
     sf::Color(  0x555555ff  ),
-    sf::Color(  0x1111eeff  )
+    sf::Color(  0x1111eeff  ),
+    sf::Color(  0xff6600ff  ),
+    sf::Color(  0x42007aff  )
+};
+
+enum BLOCKS {
+    AIR = 0,
+    SAND = 1,
+    WALL,
+    WATER,
+    LAVA,
+    OBSIDIAN
 };
 
 sf::Vector2i windowPosition({0,0});
@@ -58,48 +69,80 @@ void update_tiles(int (&tiles)[GRID_WIDTH][GRID_HEIGHT], int& current)
         {
             switch (tiles[x][y])
             {
-            case 0:
-                break;
-            case 1:
+            case BLOCKS::SAND:
             {
                 alea = ((rand()%2) * 2) - 1;
-                if (tiles[x][y-1] == 0 || tiles[x][y-1] == 3) {
+                if (tiles[x][y-1] == BLOCKS::AIR || tiles[x][y-1] == BLOCKS::WATER) {
                     tiles[x][y]   = tiles[x][y-1];
-                    tiles[x][y-1] = 1;
+                    tiles[x][y-1] = BLOCKS::SAND;
                 }
-                else if (tiles[x-alea][y-1] == 0 || tiles[x-alea][y-1] == 3) {
+                else if (tiles[x-alea][y-1] == BLOCKS::AIR || tiles[x-alea][y-1] == BLOCKS::WATER) {
                     tiles[x][y]   = tiles[x-alea][y-1];
-                    tiles[x-alea][y-1] = 1;
+                    tiles[x-alea][y-1] = BLOCKS::SAND;
                 }
-                else if (tiles[x+alea][y-1] == 0 || tiles[x+alea][y-1] == 3) {
+                else if (tiles[x+alea][y-1] == BLOCKS::AIR || tiles[x+alea][y-1] == BLOCKS::WATER) {
                     tiles[x][y]   = tiles[x+alea][y-1];
-                    tiles[x+alea][y-1] = 1;
+                    tiles[x+alea][y-1] = BLOCKS::SAND;
                 }
                 
                 break;
             }
-            case 3:
+            case BLOCKS::WATER:
             {
                 alea = ((rand()%2) * 2) - 1;
-                if (tiles[x][y-1] == 0) {
-                    tiles[x][y]   = 0;
-                    tiles[x][y-1] = 3;
+                if (tiles[x][y-1] == BLOCKS::AIR) {
+                    tiles[x][y]   = BLOCKS::AIR;
+                    tiles[x][y-1] = BLOCKS::WATER;
                 }
-                else if (tiles[x-alea][y-1] == 0) {
-                    tiles[x][y]   = 0;
-                    tiles[x-alea][y-1] = 3;
+                else if (tiles[x][y-1] == BLOCKS::LAVA) {
+                    tiles[x][y]   = BLOCKS::AIR;
+                    tiles[x][y-1] = BLOCKS::OBSIDIAN;
                 }
-                else if (tiles[x+alea][y-1] == 0) {
-                    tiles[x][y]   = 0;
-                    tiles[x+alea][y-1] = 3;
+                else if (tiles[x-alea][y-1] == BLOCKS::AIR) {
+                    tiles[x][y]   = BLOCKS::AIR;
+                    tiles[x-alea][y-1] = BLOCKS::WATER;
                 }
-                else if (tiles[x-alea][y] == 0) {
-                    tiles[x][y]   = 0;
-                    tiles[x-alea][y] = 3;
+                else if (tiles[x+alea][y-1] == BLOCKS::AIR) {
+                    tiles[x][y]   = BLOCKS::AIR;
+                    tiles[x+alea][y-1] = BLOCKS::WATER;
                 }
-                else if (tiles[x+alea][y] == 0) {
-                    tiles[x][y]   = 0;
-                    tiles[x+alea][y] = 3;
+                else if (tiles[x-alea][y] == BLOCKS::AIR) {
+                    tiles[x][y]   = BLOCKS::AIR;
+                    tiles[x-alea][y] = BLOCKS::WATER;
+                }
+                else if (tiles[x+alea][y] == BLOCKS::AIR) {
+                    tiles[x][y]   = BLOCKS::AIR;
+                    tiles[x+alea][y] = BLOCKS::WATER;
+                }
+                
+                break;
+            }
+            case BLOCKS::LAVA:
+            {
+                alea = ((rand()%2) * 2) - 1;
+                if (tiles[x][y-1] == BLOCKS::AIR) {
+                    tiles[x][y]   = BLOCKS::AIR;
+                    tiles[x][y-1] = BLOCKS::LAVA;
+                }
+                else if (tiles[x][y-1] == BLOCKS::WATER) {
+                    tiles[x][y]   = BLOCKS::AIR;
+                    tiles[x][y-1] = BLOCKS::WALL;
+                }
+                else if (tiles[x-alea][y-1] == BLOCKS::AIR) {
+                    tiles[x][y]   = BLOCKS::AIR;
+                    tiles[x-alea][y-1] = BLOCKS::LAVA;
+                }
+                else if (tiles[x+alea][y-1] == BLOCKS::AIR) {
+                    tiles[x][y]   = BLOCKS::AIR;
+                    tiles[x+alea][y-1] = BLOCKS::LAVA;
+                }
+                else if (tiles[x-alea][y] == BLOCKS::AIR) {
+                    tiles[x][y]   = BLOCKS::AIR;
+                    tiles[x-alea][y] = BLOCKS::LAVA;
+                }
+                else if (tiles[x+alea][y] == BLOCKS::AIR) {
+                    tiles[x][y]   = BLOCKS::AIR;
+                    tiles[x+alea][y] = BLOCKS::LAVA;
                 }
                 
                 break;
@@ -151,6 +194,9 @@ bool update_window(sf::RenderWindow* window, int& current)
                 break;
             case sf::Keyboard::Num3:
                 current = 3;
+                break;
+            case sf::Keyboard::Num4:
+                current = 4;
                 break;
             
             default:
