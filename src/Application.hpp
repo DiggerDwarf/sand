@@ -16,10 +16,10 @@
 
 void setup(int (&tiles)[GRID_WIDTH][GRID_HEIGHT]);
 
-void draw(sf::RenderWindow *window, int (&tiles)[GRID_WIDTH][GRID_HEIGHT], sf::Sprite& toolbar, sf::Sprite& titlebar);
+void draw(sf::RenderWindow *window, int (&tiles)[GRID_WIDTH][GRID_HEIGHT], sf::Sprite& toolbar, sf::Sprite& titlebar, int& current);
 
 void update_tiles(int (&tiles)[GRID_WIDTH][GRID_HEIGHT], int& current);
 
-bool update_window(sf::RenderWindow* window, int& current);
+bool update_window(sf::RenderWindow* window, int& current, int (&tiles)[GRID_WIDTH][GRID_HEIGHT]);
 
 #endif

@@ -12,8 +12,8 @@ void swap(T& x1, T& x2)
 int main(int argc, char* argv[])
 {
     sf::RenderWindow window(sf::VideoMode(WIN_WIDTH, BAR_SIZE + WIN_HEIGHT + BAR_SIZE), WIN_TITLE, sf::Style::None);
-    window.setFramerateLimit(60);
-    window.setVerticalSyncEnabled(true);
+    window.setFramerateLimit(50);
+    // window.setVerticalSyncEnabled(false);
 
     int tiles[GRID_WIDTH][GRID_HEIGHT];
 
@@ -39,11 +39,11 @@ int main(int argc, char* argv[])
     sf::Time total_time;
     while (true)
     {
-        if (update_window(&window, current)) break;
+        if (update_window(&window, current, tiles)) break;
 
         update_tiles(tiles, current);
 
-        draw(&window, tiles, toolbar, titlebar);
+        draw(&window, tiles, toolbar, titlebar, current);
 
         sf::Time dt = clock.restart();
         total_time += dt;

@@ -31,16 +31,16 @@ void setup(int (&tiles)[GRID_WIDTH][GRID_HEIGHT])
         {
             if( (x==0) || (y==0) || (x==GRID_WIDTH -1) || (y==GRID_HEIGHT -1))
             {
-                tiles[x][y] = 2;
+                tiles[x][y] = BLOCKS::OBSIDIAN;
                 continue;
             }
-            tiles[x][y] = 0;
+            tiles[x][y] = BLOCKS::AIR;
             // tiles[x][y] = x%2 xor y%2;
         }
     }
 }
 
-void draw( sf::RenderWindow *window, int ( &tiles )[ GRID_WIDTH ][ GRID_HEIGHT ], sf::Sprite& toolbar, sf::Sprite& titlebar )
+void draw( sf::RenderWindow *window, int ( &tiles )[ GRID_WIDTH ][ GRID_HEIGHT ], sf::Sprite& toolbar, sf::Sprite& titlebar, int& current )
 {
     window->clear( sf::Color(0x000000ff) );
 
@@ -59,6 +59,12 @@ void draw( sf::RenderWindow *window, int ( &tiles )[ GRID_WIDTH ][ GRID_HEIGHT ]
     
     window->draw(toolbar);
     window->draw(titlebar);
+
+    rect.setSize({7*TILE_SIZE, TILE_SIZE});
+    rect.setFillColor(sf::Color(0xffffffff));
+    if (current == 0) rect.setPosition(6*7*TILE_SIZE, BAR_SIZE+WIN_HEIGHT+BAR_SIZE-TILE_SIZE);
+    else rect.setPosition((current-1)*7*TILE_SIZE, BAR_SIZE+WIN_HEIGHT+BAR_SIZE-TILE_SIZE);
+    window->draw(rect);
 
     window->display();
 }
@@ -80,11 +86,11 @@ void update_tiles(int (&tiles)[GRID_WIDTH][GRID_HEIGHT], int& current)
                     tiles[x][y]   = tiles[x][y-1];
                     tiles[x][y-1] = BLOCKS::SAND;
                 }
-                else if (tiles[x-alea][y-1] == BLOCKS::AIR || tiles[x-alea][y-1] == BLOCKS::WATER) {
+                else if (tiles[x-alea][y-1] == BLOCKS::AIR || tiles[x-alea][y-1] == BLOCKS::WATER || tiles[x-alea][y-1] == BLOCKS::LAVA) {
                     tiles[x][y]   = tiles[x-alea][y-1];
                     tiles[x-alea][y-1] = BLOCKS::SAND;
                 }
-                else if (tiles[x+alea][y-1] == BLOCKS::AIR || tiles[x+alea][y-1] == BLOCKS::WATER) {
+                else if (tiles[x+alea][y-1] == BLOCKS::AIR || tiles[x+alea][y-1] == BLOCKS::WATER || tiles[x+alea][y-1] == BLOCKS::WATER) {
                     tiles[x][y]   = tiles[x+alea][y-1];
                     tiles[x+alea][y-1] = BLOCKS::SAND;
                 }
@@ -101,6 +107,9 @@ void update_tiles(int (&tiles)[GRID_WIDTH][GRID_HEIGHT], int& current)
                 else if (tiles[x][y-1] == BLOCKS::LAVA) {
                     tiles[x][y]   = BLOCKS::AIR;
                     tiles[x][y-1] = BLOCKS::OBSIDIAN;
+                }
+                else if (tiles[x][y-1] == BLOCKS::WALL && rand()%1000 == 0) {
+                    tiles[x][y-1] = BLOCKS::AIR;
                 }
                 else if (tiles[x-alea][y-1] == BLOCKS::AIR) {
                     tiles[x][y]   = BLOCKS::AIR;
@@ -144,15 +153,33 @@ void update_tiles(int (&tiles)[GRID_WIDTH][GRID_HEIGHT], int& current)
                     tiles[x][y]   = BLOCKS::AIR;
                     tiles[x+alea][y-1] = BLOCKS::LAVA;
                 }
-                else if (tiles[x-alea][y] == BLOCKS::AIR) {
+                else if (tiles[x-alea][y] == BLOCKS::AIR || tiles[x-alea][y] == BLOCKS::GREEN) {
                     tiles[x][y]   = BLOCKS::AIR;
                     tiles[x-alea][y] = BLOCKS::LAVA;
                 }
-                else if (tiles[x+alea][y] == BLOCKS::AIR) {
+                else if (tiles[x+alea][y] == BLOCKS::AIR || tiles[x+alea][y] == BLOCKS::GREEN) {
                     tiles[x][y]   = BLOCKS::AIR;
                     tiles[x+alea][y] = BLOCKS::LAVA;
                 }
                 
+                break;
+            }
+            case BLOCKS::GREEN:
+            {
+                alea =      (rand()%3) - 1;
+                int alea2 = (rand()%3) - 1;
+                if (tiles[x+alea][y+alea2] == BLOCKS::WATER && rand()%2 == 0)
+                {
+                    tiles[x+alea][y+alea2] = BLOCKS::GREEN;
+                }
+                else if (tiles[x+alea][y+alea2] == BLOCKS::WALL)
+                {
+                    if (rand()%30 == 1)
+                    {
+                        tiles[x+alea][y+alea2] = BLOCKS::GREEN;
+                    }
+                }
+
                 break;
             }
             default:
@@ -175,7 +202,7 @@ void update_tiles(int (&tiles)[GRID_WIDTH][GRID_HEIGHT], int& current)
     
 }
 
-bool update_window(sf::RenderWindow* window, int& current)
+bool update_window(sf::RenderWindow* window, int& current, int (&tiles)[GRID_WIDTH][GRID_HEIGHT])
 {
     sf::Event event;
     windowPosition = window->getPosition();
@@ -195,8 +222,9 @@ bool update_window(sf::RenderWindow* window, int& current)
             {
                 if (mPos.x - windowPosition.x > WIN_WIDTH - 7*TILE_SIZE)
                 {
-                    window->close();
-                    out = true;
+                    // window->close();
+                    // out = true;
+                    setup(tiles);
                 }
                 else
                 {
@@ -211,6 +239,10 @@ bool update_window(sf::RenderWindow* window, int& current)
         case sf::Event::KeyPressed:
             switch (event.key.code)
             {
+            case sf::Keyboard::Escape:
+                window->close();
+                out = true;
+                break;
             case sf::Keyboard::Num0:
                 current = BLOCKS::AIR;
                 break;
