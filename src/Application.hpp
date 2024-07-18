@@ -2,7 +2,6 @@
 #define APPLICATION_INCLUDED
 
 #include <SFML/Graphics.hpp>                 
-#include <iostream>
 #include <random>
 
 #define BAR_SIZE 140
@@ -16,7 +15,7 @@
 
 void setup(int (&tiles)[GRID_WIDTH][GRID_HEIGHT]);
 
-void draw(sf::RenderWindow *window, int (&tiles)[GRID_WIDTH][GRID_HEIGHT], sf::Sprite& toolbar, sf::Sprite& titlebar, int& current);
+void draw(sf::RenderWindow *window, int (&tiles)[GRID_WIDTH][GRID_HEIGHT], const sf::Sprite& toolbar, sf::Sprite& titlebar, int& current);
 
 void update_tiles(int (&tiles)[GRID_WIDTH][GRID_HEIGHT], int& current);
 

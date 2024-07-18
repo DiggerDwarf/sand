@@ -1,13 +1,4 @@
 #include "Application.hpp"
-#include <chrono>
-
-template <typename T>
-void swap(T& x1, T& x2)
-{
-    x1 = x1 ^ x2;
-    x2 = x1 ^ x2;
-    x1 = x1 ^ x2;
-}
 
 int main(int argc, char* argv[])
 {
@@ -35,8 +26,7 @@ int main(int argc, char* argv[])
     setup(tiles);
     
     int current = 1;
-    sf::Clock clock;
-    sf::Time total_time;
+
     while (true)
     {
         if (update_window(&window, current, tiles)) break;
@@ -44,11 +34,6 @@ int main(int argc, char* argv[])
         update_tiles(tiles, current);
 
         draw(&window, tiles, toolbar, titlebar, current);
-
-        sf::Time dt = clock.restart();
-        total_time += dt;
-
-        // std::cout << 1.f/dt.asSeconds() << "\n";
     }
 
     return 0;
