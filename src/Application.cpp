@@ -42,7 +42,7 @@ void setup(int (&tiles)[GRID_WIDTH][GRID_HEIGHT])
 
 void draw( sf::RenderWindow *window, int ( &tiles )[ GRID_WIDTH ][ GRID_HEIGHT ], const sf::Sprite& toolbar, sf::Sprite& titlebar, int& current )
 {
-    window->clear( sf::Color(0x000000ff) );
+    // window->clear( sf::Color(0x000000ff) );
 
     sf::RectangleShape rect({TILE_SIZE, TILE_SIZE});
     
